@@ -2,11 +2,6 @@ import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
-  
-  const registerGo = (value) => {
-    window.location.href = `/Register_form/${value}`;
-  };
-    
   return (
     
         <div className='content_body'>
