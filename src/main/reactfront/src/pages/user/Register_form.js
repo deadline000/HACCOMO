@@ -63,7 +63,7 @@ const Register_form = () => {
                         </div>
                         <div className='inputs'>
                             <div className='cols'><purple>*</purple> 전화번호 </div>
-                            <div><input type='text' name='userNickname' placeholder="'-'제외 숫자만 입력"></input></div>
+                            <div><input type='text' name='userPhone' placeholder="'-'제외 숫자만 입력"></input></div>
                         </div>
                         <div className='inputs'>
                             <div className='cols'><purple>*</purple> 닉네임 </div>
