@@ -4,17 +4,39 @@ import com.boot.haccomo.user.dto.UserDTO;
 import com.boot.haccomo.user.entity.UserEntity;
 import com.boot.haccomo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserService(UserRepository userRepository,BCryptPasswordEncoder bCryptPasswordEncoder){
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
 //    신규 가입
     public void register(UserDTO userDTO){
+
         UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        userEntity.setUserPwd(bCryptPasswordEncoder.encode(userEntity.getUserPwd()));
         userRepository.save(userEntity);
+    }
+
+//    로그인
+    public UserDTO findByUserId(String userid){
+        UserEntity userEntity = userRepository.findByUserId(userid);
+        UserDTO userDTO = new UserDTO();
+        if (userEntity != null){
+            userDTO = UserDTO.toUserDTO(userEntity);
+            return userDTO;
+        }else {
+            return null;
+        }
     }
 
 }

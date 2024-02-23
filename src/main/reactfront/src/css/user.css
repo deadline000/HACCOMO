@@ -215,3 +215,20 @@ red{
     margin-top: 30px;
     border-radius: 5px;
 }
+.registerOk{
+    margin: 0 auto;
+    text-align: center;
+}
+#ok{
+    height: 500px;
+}
+#ok h3{
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: -50px;
+}
+#ok h4{
+    font-size: 2em;
+    font-weight: 700;
+}

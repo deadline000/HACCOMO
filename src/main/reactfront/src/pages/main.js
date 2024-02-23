@@ -1,7 +1,20 @@
 // 헤더
-import React from 'react';
+import React,{ useContext } from 'react';
+import { AuthContext } from './provider/AuthProvider'; // 토큰+로그인정보
 
 const Main = () => {
+    const { isLogin } = useContext(AuthContext);
+
+    // 회원가입 버튼 클릭 시
+    const goRegister = () => {
+        if (isLogin) {
+            alert("이미 로그인되어 있습니다.");
+            return;
+        } else {
+            window.location.href = '/register';
+        }
+    };
+
     return (
         <main>
             <article className="main_sec1">
@@ -119,7 +132,7 @@ const Main = () => {
               <section>
                   <h3>HACCOMO와 함께 당신의 꿈을 키워보세요!</h3>
                   
-                  <button>회원가입</button>
+                  <button onClick={goRegister}>회원가입</button>
               </section>       
            </article>
         </main>

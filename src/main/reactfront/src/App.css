@@ -175,7 +175,7 @@ header>div >:nth-child(1) span{
 .menu>ul>li{
     position: relative;
     display: inline-block;
-    margin-left: 50px;
+    margin-left: 40px;
 }
 
 .menu>ul>li>a{

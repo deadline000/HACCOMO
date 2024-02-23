@@ -9,12 +9,13 @@ const Register_form = () => {
     // 받아온 가입 유형 (role)
     const { value } = useParams(); //creator / user
     const roleText = value === 'creator' ? '크리에이터' : '일반';
+    const role = value === 'creator' ? 'ROLE_CREATOR' : 'ROLE_USER';
 
     // role 값 설정
     useEffect(() => {
         setFormValues(prevState => ({
             ...prevState,
-            userRole: value
+            userRole: role
         }));
     }, [value]);
 
@@ -79,9 +80,8 @@ const Register_form = () => {
             const response = await axios.post('/user/register', formValues, {
                 withCredentials: true
             });
-            console.log('회원가입 응답:', response.data); // 응답 데이터 콘솔에 출력
             if (response.data === "success") {
-                alert("회원가입이 완료되었습니다!\n로그인 창으로 이동합니다.");
+                window.location.href = `/Register_ok/${value}`;
             } else {
                 alert("회원가입 실패!");
             }
@@ -95,6 +95,7 @@ const Register_form = () => {
         <div className='content_body'>
             <div className='registerContainer'>
                 <h2>{roleText}&nbsp;&nbsp;회원가입</h2>
+                
                 <section className='register_phase'>
                     <div className='purpleCircle active'>1</div>
                     
@@ -170,7 +171,7 @@ const Register_form = () => {
                             <span>[선택] 마케팅 정보 수신 동의</span>
                         </label>
                         <br/>
-                        <button id='backBtn' type="submit">취소</button>
+                        <button id='backBtn' type='button' onClick={() => { window.location.href = '/register' }}>취소</button>
                         <button id='registerBtn' type="submit">회원가입</button>
                     </div>
 

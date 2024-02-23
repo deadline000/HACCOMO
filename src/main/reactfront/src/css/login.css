@@ -1,0 +1,41 @@
+.loginContainer{
+    width: 800px;
+    height: 500px;
+    margin: 0 auto;
+    margin-top: 100px;
+    border-radius: 20px;
+    padding-top: 70px;
+    box-shadow: 0px 0px 10px #dddddd;
+}
+.loginContainer h3{
+    width: 200px;
+    text-align: center;
+    font-size: 2em;
+    font-weight: 700;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    padding-bottom: 15px;
+    border-bottom: 3px dotted #242424;
+}
+.loginTable{
+    width: 50%;
+    margin: 0 auto;
+    font-size: 1.5em;
+    padding: 20px;
+}
+.loginTable tr{
+    height: 70px;
+}
+.loginTable tr td:nth-child(1){
+    font-size: 1em;
+    padding-right: 50px;
+}
+.loginTable input{
+    height: 30px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px #6B29C6;
+}
+.loginTable tr:nth-child(3) td{
+    text-align: center;
+}
