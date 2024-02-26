@@ -33,6 +33,7 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
+//    패스워드 암호화
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
@@ -45,8 +46,10 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+//    스프링부트 3.1.X 버전 부터 람다식 필수
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+//        cors 설정 (리액트와 연동 위함)
         http
                 .cors((cors) -> cors
                         .configurationSource(new CorsConfigurationSource() {
@@ -58,7 +61,7 @@ public class SecurityConfig {
                                 configuration.setAllowedMethods(Collections.singletonList("*")); //허용할 메소드
                                 configuration.setAllowCredentials(true);
                                 configuration.setAllowedHeaders(Collections.singletonList("*")); //허용할 헤더
-                                configuration.setMaxAge(3600L); //허용을 물고있을 시간
+                                configuration.setMaxAge(3600L); //허용 유지 시간
 
                                 configuration.setExposedHeaders(Collections.singletonList("Authorization")); //클라이언트에게 보내줄 Authorization
 
@@ -66,8 +69,7 @@ public class SecurityConfig {
                             }
                         }));
 
-        //csrf disable
-        //세션을 스테이트리스 상태로 관리하기 떄문에 csrf 공격을 굳이 방어하지 않아도 됨 -> disable
+        //csrf disable (세션을 STATELESS 상태로 설정하므로)
         http
                 .csrf((auth) -> auth.disable());
 
@@ -82,22 +84,24 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/user/login", "/", "/user/register").permitAll()
-                        .requestMatchers("/myInfo").authenticated()
+                        .requestMatchers("/myInfo").authenticated() //로그인한 사용자만 접근가능
+                        .anyRequest().permitAll() //나머지 페이지는 모두 접근가능
                 );
-//                        .anyRequest().authenticated()); //로그인한 사용자만 접근가능 (임시)
+//        로그인 경로
+//        http
+//                .formLogin((auth) -> auth.loginPage("/user/login")
+//                        .loginProcessingUrl("/user/login")
+//                        .permitAll()
+//                );
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
 
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-
-        //세션 설정
-        //JWT를 통한 인증/인가를 위해서 세션을 STATELESS 상태로 설정하는 것이 중요
+        //세션 설정 => JWT를 통한 인증/인가를 위해 세션을 STATELESS로 설정
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

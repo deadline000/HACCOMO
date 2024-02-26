@@ -8,7 +8,13 @@ import com.boot.haccomo.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,20 +29,39 @@ public class UserController {
     private final UserService userService;
     private  final JWTUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserController(JWTUtil jwtUtil, UserService userService,BCryptPasswordEncoder passwordEncoder,CustomUserDetailsService customUserDetailsService) {
+    public UserController(JWTUtil jwtUtil
+                            ,UserService userService
+                            ,BCryptPasswordEncoder passwordEncoder
+                            ,AuthenticationManager authenticationManager) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.customUserDetailsService = customUserDetailsService;
+        this.authenticationManager = authenticationManager;
+    }
+
+    // 가입 시 아이디 중복체크
+    @GetMapping("/userIdCheck")
+    public ResponseEntity<Integer> userIdCheck(@RequestParam String userId){
+        try {
+            if (userService.existsByUserId(userId)) {
+                return ResponseEntity.ok(0); //중복 아이디 존재 (회원가입 불가능)
+            }else if (userId.isEmpty()) {
+                return ResponseEntity.ok(2); //입력값 null
+            }else{
+                return ResponseEntity.ok(1); //중복 아이디 없음 (회원가입 가능)
+            }
+        } catch (Exception e) {
+            log.error("중복검사 00에러", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(3);
+        }
+
     }
 
     // 신규 가입
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
-
-        log.info(userDTO.getUserId());
 
         try {
             userService.register(userDTO);
@@ -50,33 +75,49 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO){
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
-//            받은 userId 값으로 계정 조회
-            UserDTO userDTO1 = userService.findByUserId(userDTO.getUserId());
+            // userId, userPwd를 토큰으로 변환
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO.getUserId(), userDTO.getUserPwd());
 
-            // 계정 있을 경우
-            if (userDTO1 != null){
-                if (passwordEncoder.matches(userDTO.getUserPwd(),userDTO1.getUserPwd())){
-                    //로그인 성공 + jwt 토큰 생성 (유효시간 24시간)
-                    String token = jwtUtil.createJwt(userDTO1.getUserId(), userDTO1.getUserRole(), 86400000L);
+            // AuthenticationManager를 통해 인증 시도
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-                    // Map에 토큰과 유저 정보를 넣어서 전송
-                    Map<String, Object> responseMap = new HashMap<>();
-                    responseMap.put("token", token);
-                    responseMap.put("user", userDTO1);
+            // 인증 성공한 경우
+            if (authentication.isAuthenticated()) {
 
-                    return ResponseEntity.ok().body(responseMap);
-                }else {
-                    return ResponseEntity.ok().body("noPwd"); //비밀번호 틀림
-                }
-            }else { //아이디 없을 경우
-                return ResponseEntity.ok().body("noId"); //없는 계정
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // UserDTO에서 필요한 정보 추출
+                CustomUserDetails authenticatedUser = (CustomUserDetails) authentication.getPrincipal();
+
+                // 로그인 성공 + jwt 토큰 생성 (유효시간 24시간)
+                String token = jwtUtil.createJwt(authenticatedUser.getUsername(), authenticatedUser.getAuthorities().iterator().next().getAuthority(), 86400000L);
+
+                // Map에 토큰과 유저 정보를 넣어서 전송
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("token", token);
+                responseMap.put("userId", authenticatedUser.getUsername());
+                responseMap.put("userNickname", authenticatedUser.getUserNickname());
+                responseMap.put("userRole", authenticatedUser.getAuthorities().iterator().next().getAuthority());
+
+                log.info("*********"+authenticatedUser.getAuthorities().iterator().next().getAuthority());
+
+                return ResponseEntity.ok().body(responseMap);
+
+            } else { // 인증 실패
+                return ResponseEntity.ok().body("loginFailed");
             }
+        } catch (BadCredentialsException e) {
+            // 비밀번호가 틀린 경우
+            return ResponseEntity.ok().body("loginFailed");
+        } catch (UsernameNotFoundException e) {
+            // 아이디가 없는 경우
+            return ResponseEntity.ok().body("loginFailed");
         } catch (Exception e) {
-            log.error("로그인 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failure");
+            log.error("로그인 실패!!!!!!!!!!!!!!!", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
         }
-
     }
+
 }

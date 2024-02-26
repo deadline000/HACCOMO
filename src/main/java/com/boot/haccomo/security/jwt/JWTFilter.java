@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+// filter chain에 요청에 담긴 JWT를 검증하기 위한 커스텀 필터
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -53,8 +54,8 @@ public class JWTFilter extends OncePerRequestFilter {
         //두개의 if를 거쳐 정상적인 토큰임을 확인.
 
         //토큰에서 username과 role 획득
-        String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
+        String username = jwtUtil.getUserId(token);
+        String role = jwtUtil.getUserRole(token);
 
         //userEntity를 생성하여 값 set
         UserEntity userEntity = new UserEntity();

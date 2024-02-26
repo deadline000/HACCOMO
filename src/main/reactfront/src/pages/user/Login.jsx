@@ -36,21 +36,27 @@ const Login = () => {
                 withCredentials: true
             });
             console.log('로그인 응답:', response.data); // 응답 데이터 콘솔에 출력
-            if (response.data === "noPwd") {
-                alert("비밀번호가 틀렸습니다!");
-            } else if (response.data === "noId") {
-                alert("일치하는 아이디가 없습니다!");
-            } else {
-                // 서버에서 받은 데이터 (토큰, 유저객체)
-                const { token, user } = response.data;
 
-                login(response.data, user); // 로그인 성공 시 AuthProvider에 토큰+유저정보 저장
-
+            if (response.data === "loginFailed") {
+                alert("비밀번호가 틀렸습니다.");
+            } else if (response.status === 200) {
+                const { token, userId, userNickname, userRole } = response.data;
+    
+                login(token, userId, userNickname,userRole); // 로그인 성공 시 AuthProvider에 토큰+유저정보 저장
+    
                 alert("로그인 성공!");
                 navigate('/');
+                window.location.reload(); // 페이지 새로고침
+
+            } else {
+                alert("인증 실패!");
             }
         } catch (error) {
-            alert("에러!");
+            if (error.response.status === 500) {
+                alert("없는 아이디입니다.");
+            } else {
+                alert("에러!");
+            }
             console.error('에러 발생:', error.response.data);
         }
     };
@@ -61,16 +67,17 @@ const Login = () => {
                 <h3>로그인</h3>
                 <form onSubmit={loginSubmit}>
                     <table className='loginTable'>
+                    <tbody>
                         <tr>
                             <td><purple>아이디</purple></td>
                             <td>
-                                <input type='text' name='userId' value={formValues.userId} onChange={handleChange} placeholder='아이디를 입력하세요.' />
+                                <input type='text' name='userId' value={formValues.userId} onChange={handleChange} placeholder='아이디를 입력하세요.' required />
                             </td>
                         </tr>
                         <tr>
                             <td><purple>패스워드</purple></td>
                             <td>
-                                <input type='password' name='userPwd' value={formValues.userPwd} onChange={handleChange} placeholder='패스워드를 입력하세요.' />
+                                <input type='password' name='userPwd' value={formValues.userPwd} onChange={handleChange} placeholder='패스워드를 입력하세요.' required />
                             </td>
                         </tr>
                         <tr>
@@ -78,6 +85,7 @@ const Login = () => {
                                 <button id='registerBtn' type='submit'>로그인</button>
                             </td>
                         </tr>
+                    </tbody>
                     </table>
                 </form>
             </div>

@@ -14,7 +14,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() { //롤값 반환
+    public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
             @Override
             public String getAuthority() {
                 return userEntity.getUserRole();
-            }
+            } //role 반환
         });
 
         return collection;
@@ -32,11 +32,15 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getPassword() {
         return userEntity.getUserPwd();
-    }
+    } //userId
 
     @Override
     public String getUsername() {
         return userEntity.getUserId();
+    } //userPwd
+
+    public String getUserNickname() {
+        return userEntity.getUserNickname();
     }
 
     @Override

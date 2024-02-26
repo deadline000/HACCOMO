@@ -67,12 +67,49 @@ const Register_form = () => {
         }));
     };
 
+    // 패스워드 확인
+    const [userPwdCheck, setUserPwdCheck] = useState('');
+    // 비밀번호 확인 값 변경
+    const handlePwdCheckChange = (e) => {
+        const { value } = e.target;
+        setUserPwdCheck(value);
+    };
+
+    // 중복 확인 결과 (1이어야 회원가입 가능)
+    const [isUserIdDuplicate, setIsUserIdDuplicate] = useState(null);
+
+    // 아이디 중복 확인 요청
+    const idCheck = async () => {
+        try {
+            const response = await axios.get('/user/userIdCheck', {
+                params: {
+                    userId: formValues.userId
+                }
+            });
+            setIsUserIdDuplicate(response.data); // 중복 여부를 받아와서 상태 업데이트
+        } catch (error) {
+            console.error('중복 확인 에러:', error);
+            // 에러 처리 로직 추가
+        }
+    };
+
     // 폼 제출
     const registerSubmit = async (e) => {
         e.preventDefault();
 
+        // 필수 동의 미체크 시
         if (!isChecked_a) {
             alert("필수 이용약관에 동의하셔야 회원가입이 완료됩니다.");
+            return;
+        }
+        // 아이디 중복체크 안했을때 or 중복일 시
+        if (isUserIdDuplicate !== 1 || isUserIdDuplicate === null) {
+            alert("아이디 중복확인 바랍니다!");
+            return;
+        }
+        // 비밀번호와 비밀번호 확인 일치 여부 확인
+        if (formValues.userPwd !== userPwdCheck || formValues.userPwd === '') {
+            alert("비밀번호가 일치하지 않습니다!");
             return;
         }
 
@@ -113,9 +150,13 @@ const Register_form = () => {
                         <p><purple>*</purple> 필수입력사항</p>
 
                     
-                        <div className='inputs'>
+                        <div className='inputs_id'>
                             <div className='cols'><purple>*</purple> 아이디 </div>
                             <div><input type='text' name='userId' value={formValues.userId} onChange={handleChange}  placeholder='아이디 입력'></input></div>
+                            <div><button id='idCheckBtn' type='button' onClick={idCheck}>중복확인</button></div>
+                            {isUserIdDuplicate === 0 && <div style={{ color: 'red' }}>이미 사용 중인 아이디입니다.</div>}
+                            {isUserIdDuplicate === 1 && <div style={{ color: 'blue' }}>사용 가능한 아이디입니다.</div>}
+                            {isUserIdDuplicate === 2 && <div style={{ color: 'red' }}>아이디를 입력해주세요!</div>}
                         </div>
                         <div className='inputs'>
                             <div className='cols'><purple>*</purple> 비밀번호 </div>
@@ -123,7 +164,9 @@ const Register_form = () => {
                         </div>
                         <div className='inputs'>
                             <div className='cols'><purple>*</purple> 비밀번호 확인 </div>
-                            <div><input type='password' name='userPwdCheck' value={formValues.userPwdCheck} onChange={handleChange} placeholder='비밀번호 확인'></input></div>
+                            <div><input type='password' name='userPwdCheck' value={userPwdCheck} onChange={handlePwdCheckChange} placeholder='비밀번호 확인'></input></div>
+                            {userPwdCheck === formValues.userPwd && formValues.userPwd !== '' && <div style={{ color: 'blue' }}>비밀번호가 일치합니다.</div>}
+                            {userPwdCheck !== formValues.userPwd && <div style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</div>}
                         </div>
 
                         <div className='inputs'>

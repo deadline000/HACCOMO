@@ -3,11 +3,11 @@ import React,{ useContext } from 'react';
 import { AuthContext } from './provider/AuthProvider'; // 토큰+로그인정보
 
 const Main = () => {
-    const { isLogin } = useContext(AuthContext);
+    const { isLoginFromCookie } = useContext(AuthContext);
 
     // 회원가입 버튼 클릭 시
     const goRegister = () => {
-        if (isLogin) {
+        if (isLoginFromCookie) {
             alert("이미 로그인되어 있습니다.");
             return;
         } else {

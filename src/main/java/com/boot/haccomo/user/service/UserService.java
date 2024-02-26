@@ -19,6 +19,15 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+//    아이디 중복 체크
+    public Boolean existsByUserId(String userId){
+        if(userRepository.existsByUserId(userId)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 //    신규 가입
     public void register(UserDTO userDTO){
 

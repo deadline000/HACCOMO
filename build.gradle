@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    //    기본
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -33,19 +32,19 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
     testImplementation 'org.springframework.security:spring-security-test'
 
-//    JPA
+//   JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-//	mysql
+//	 mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-//  벨리데이션
+//   벨리데이션
 //    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
 
-//    jwy 최신버전
+//    jwy 최신버전 (대부분 0.11.5를 사용하지만 여기서는 0.12.3 버전 사용)
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'

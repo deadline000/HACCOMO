@@ -165,6 +165,38 @@ red{
     grid-template-columns: 30% 70%;
     margin: 10px;
 }
+.inputs div:nth-child(3){
+    width: 100%;
+    margin-left: 210px;
+}
+.inputs_id{
+    display: grid;
+    grid-template-columns: 30% 50% 20%;
+    margin: 10px;
+}
+.inputs_id div input{
+    width: 250px;
+}
+.inputs_id div:nth-child(4){
+    width: 100%;
+    margin-left: 210px;
+}
+#idCheckBtn{
+    display: inline-block;
+    border-radius: 5px;
+    height: 40px;
+    font-size: 1em;
+    margin-top: 20px;
+    float: right;
+    margin-right: 20px;
+    background-color: white;
+    border: 1px solid #cccccc;
+    color: #242424;
+}
+#idCheckBtn:hover{
+    box-shadow: 0px 0px 8px #cccccc;
+}
+
 .cols{
     margin: 20px;
     margin-top: 30px;

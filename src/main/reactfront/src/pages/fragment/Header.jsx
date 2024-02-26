@@ -1,26 +1,21 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../provider/AuthProvider'; //토큰+로그인정보
+import Cookies from 'js-cookie';
 
 // 헤더
 const Header = () => {
-    const { isLogin,logout,userId,userNickname } = useContext(AuthContext);
+    const {
+        isLoginFromCookie,
+        userNicknameCookie,
+        userRoleCookie,
+        userIdCookie,
+        logout
+    } = useContext(AuthContext);
 
-    // 로그아웃
-    const handleLogout = (e) => {
-        e.preventDefault();
-        if(window.confirm("로그아웃 하시겠습니까?")){
-            alert("로그아웃되었습니다.");
-            logout();
-        }
-    };
-    
-  return (
-    
+    return (
         <header>
             <div>
                 <h2><a href="/">HA<span>CCO</span>MO</a></h2>
-                <h4>아이디: {userId}</h4>
-                <h4>닉네임: {userNickname}</h4>
                 
                 <nav className="menu">
                     <ul>
@@ -63,23 +58,22 @@ const Header = () => {
 
                 <div>
                     {/* 로그인 상태에 따라 다른 링크 표시 */}
-                    {isLogin ? (
+                    {isLoginFromCookie ? (
                         <div>
-                        <a href="#">내정보</a>
-                        <a href="#" onClick={handleLogout}>로그아웃</a>
+                            <a href="/myinfo">내정보</a>
+                            <a href="#" onClick={logout}>로그아웃</a>
                         </div>
                     ) : (
                         <div>
-                        <a href="/login">로그인</a>
-                        <a href="/register">회원가입</a>
+                            <a href="/login">로그인</a>
+                            <a href="/register">회원가입</a>
                         </div>
                     )}
                 </div>
                 
             </div>
         </header>
-
-  );
+    );
 };
 
 export default Header;
