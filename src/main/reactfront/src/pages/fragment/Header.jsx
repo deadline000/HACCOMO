@@ -1,14 +1,11 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../provider/AuthProvider'; //토큰+로그인정보
-import Cookies from 'js-cookie';
 
 // 헤더
 const Header = () => {
+    // 쿠키
     const {
         isLoginFromCookie,
-        userNicknameCookie,
-        userRoleCookie,
-        userIdCookie,
         logout
     } = useContext(AuthContext);
 

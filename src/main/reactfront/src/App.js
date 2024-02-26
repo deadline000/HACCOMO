@@ -18,6 +18,7 @@ import Login from './pages/user/Login'; // 로그인
 import Myinfo from './pages/user/Myinfo/Myinfo'; // 내정보
 
 import UserInfo from './pages/user/Myinfo/Userinfo'; //내정보 > 회원정보
+import UserinfoModify from './pages/user/Myinfo/UserinfoModify'; //내정보 > 회원정보 > 정보수정
 import MyProfile from './pages/user/Myinfo/MyProfile'; //내정보 > 내 프로필
 import MyQuestions from './pages/user/Myinfo/MyQuestions'; //내정보 > 내 문의
 import MyPosts from './pages/user/Myinfo/MyPosts'; //내정보 > 내 게시물
@@ -41,12 +42,13 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             
             <Route path="/myinfo/*" element={<Myinfo />}>
-              <Route path="" element={<UserInfo />} />
+              <Route index path="" element={<UserInfo />} />
               <Route path="UserInfo" element={<UserInfo />}></Route>
               <Route path="MyProfile" element={<MyProfile />}></Route>
               <Route path="MyQuestions" element={<MyQuestions />}></Route>
               <Route path="MyPosts" element={<MyPosts />}></Route>
               <Route path="Withdraw" element={<Withdraw />}></Route>
+              <Route path="UserinfoModify" element={<UserinfoModify />}></Route>
             </Route>
 
           </Routes>

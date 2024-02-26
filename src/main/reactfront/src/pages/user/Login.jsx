@@ -5,16 +5,15 @@ import { AuthContext } from '../provider/AuthProvider'; //토큰+로그인정보
 
 const Login = () => {
     const { login } = useContext(AuthContext); // AuthContext에서 login 함수 가져오기
-    
+    const navigate  = useNavigate();
 
     // 폼 정의
     const [formValues, setFormValues] = useState({
         userId: '',
         userPwd: '',
     });
+    
     // 폼 데이터 변경
-    const navigate  = useNavigate();
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prevState => ({

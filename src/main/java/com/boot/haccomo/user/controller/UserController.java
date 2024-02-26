@@ -28,16 +28,13 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private  final JWTUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public UserController(JWTUtil jwtUtil
                             ,UserService userService
-                            ,BCryptPasswordEncoder passwordEncoder
                             ,AuthenticationManager authenticationManager) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
 
@@ -118,6 +115,33 @@ public class UserController {
             log.error("로그인 실패!!!!!!!!!!!!!!!", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
         }
+    }
+
+//    회원 조회 (토큰 검증)
+    @GetMapping("/info")
+    public ResponseEntity<UserDTO> userInfo(@RequestHeader(name = "Authorization") String token) {
+
+        if (jwtUtil.isExpired(token)) {
+            // 토큰 유효성 검사
+//            토큰 유효만료 시
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String userId = jwtUtil.getUserId(token);
+        if (userId == null) {
+            // 토큰에서 userId 추출
+//            토큰에 userId가 없을 시 (부적절한 토큰)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        UserDTO userDTO = userService.findByUserId(userId);
+        if (userDTO == null) {
+            // userId를 사용하여 회원 정보 조회
+//            DB에 해당 userId 계정이 없을 시
+            return ResponseEntity.notFound().build();
+        }
+        log.info("가입일 -------> "+userDTO.getSignupDate());
+        return ResponseEntity.ok(userDTO);
     }
 
 }

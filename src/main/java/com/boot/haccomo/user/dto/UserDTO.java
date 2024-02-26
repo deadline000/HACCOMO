@@ -1,17 +1,12 @@
 package com.boot.haccomo.user.dto;
 
 import com.boot.haccomo.user.entity.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -25,8 +20,8 @@ public class UserDTO {
     private String userEmail;
     private String userRole;
     private String userBirth;
-    private LocalDateTime signupDate;
-    private LocalDateTime lastModifiedDate;
+    private String signupDate;
+    private String lastModifiedDate;
     private String marketingAgreement; //마케팅수신동의여부
 
 //    테이블에서 조회한 엔티티를 dto 객체로 변환
@@ -41,11 +36,20 @@ public class UserDTO {
         userDTO.setUserEmail(userEntity.getUserEmail()); //이메일
         userDTO.setUserRole(userEntity.getUserRole()); //role
         userDTO.setUserBirth(userDTO.getUserBirth()); //생년월일
-        userDTO.setSignupDate(userEntity.getSignupDate()); //가입시간
-        userDTO.setLastModifiedDate(userEntity.getLastModifiedDate()); //마지막수정시간
+        userDTO.setSignupDate(formatDate(userEntity.getSignupDate())); // 가입시간 포맷
+        userDTO.setLastModifiedDate(formatDate(userEntity.getLastModifiedDate())); // 마지막수정시간 포맷
         userDTO.setMarketingAgreement(userDTO.getMarketingAgreement()); //마케팅수신여부
 
         return userDTO;
+    }
+
+//   엔티티의 LocalDateTime을 문자열로 포맷
+    private static String formatDate(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dateTime.format(formatter);
     }
 }
 

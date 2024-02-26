@@ -36,7 +36,7 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-//    로그인
+//    아이디로 회원 조회
     public UserDTO findByUserId(String userid){
         UserEntity userEntity = userRepository.findByUserId(userid);
         UserDTO userDTO = new UserDTO();
