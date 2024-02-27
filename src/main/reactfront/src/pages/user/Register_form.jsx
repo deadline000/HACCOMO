@@ -49,15 +49,6 @@ const Register_form = () => {
         }));
     };
 
-    // 생년월일 변경 시
-    const handleBirthChange = (date) => {
-        // date가 null이면 빈 문자열로, 아니면 YYYY-MM-DD 형식으로 변환하여 저장
-        setFormValues(prevState => ({
-            ...prevState,
-            userBirth: date ? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}` : ''
-        }));
-    };
-    
     // input 값에 따른 세팅
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -171,15 +162,7 @@ const Register_form = () => {
 
                         <div className='inputs'>
                             <div className='cols'><purple>*</purple> 생년월일 </div>
-                            <div className='birthdate'>
-                                <DatePicker
-                                    locale={ko}
-                                    selected={formValues.userBirth ? new Date(formValues.userBirth) : null}
-                                    onChange={handleBirthChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="직접 입력할 수 있습니다. (ex> 1994-10-25)"
-                                />
-                            </div>
+                            <div><input type='text' name='userBirth' value={formValues.userBirth} onChange={handleChange}  placeholder="YYYY-MM-DD 형식으로 입력해주세요."></input></div>
                         </div>
 
                         <div className='inputs'>

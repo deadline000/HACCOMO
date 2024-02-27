@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const UserinfoModify = () => {
     const location = useLocation();
@@ -12,69 +13,85 @@ const UserinfoModify = () => {
           navigate('/');
         }
       }, []);
+
+    // form 구성
+    const [formValues, setFormValues] = useState({
+        userId: user.userId,
+        userPwd: user.userPwd,
+        userPhone: '',
+        userNickname: '',
+        userEmail: '',
+        userRole: '',
+        marketingAgreement: '',
+        userBirth: ''
+    });
+
+    // input 값에 따른 세팅
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    // 폼 제출
+    const modifySubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('/user/userModify', formValues, {
+                withCredentials: true
+            });
+            if (response.data === "success") {
+                alert("수정되었습니다!");
+                window.location.reload();
+            } else {
+                alert("회원가입 실패!");
+            }
+        } catch (error) {
+            alert("에러!");
+            console.error('에러 발생:', error.response.data);
+        }
+    };
     
     return (
         <div className='content_body'>
         <div className='registerContainer'>
             <h2>회원정보 수정</h2>
             
-            <form onSubmit={registerSubmit}>
-                <section className='modify_form'>
+            <form onSubmit={modifySubmit}>
+                <section className='register_form'>
                     <p><purple>*</purple> 필수입력사항</p>
 
                     <div className='inputs'>
-                        <div className='cols'><purple>*</purple> 아이디 </div>
-                        <div><input type='text' name='userId' value={user.userId} onChange={handleChange} readOnly></input></div>
+                        <div className='cols'> 아이디 </div>
+                        <div>{user.userId}</div>
                     </div>
 
                     <div className='inputs'>
-                        <div className='cols'><purple>*</purple> 생년월일 </div>
-                        <div className='birthdate'>
-                            <DatePicker
-                                locale={ko}
-                                onChange={handleBirthChange}
-                                dateFormat="yyyy-MM-dd"
-                                placeholderText="직접 입력할 수 있습니다. (ex> 1994-10-25)"
-                            />
+                            <div className='cols'><purple>*</purple> 생년월일 </div>
+                            <div><input type='text' name='userBirth' value={user.userBirth} onChange={handleChange}  placeholder="YYYY-MM-DD 형식으로 입력해주세요." required></input></div>
                         </div>
-                    </div>
 
                     <div className='inputs'>
                         <div className='cols'><purple>*</purple> 전화번호 </div>
-                        <div><input type='text' name='userPhone' value={formValues.userPhone} onChange={handleChange}  placeholder="'-'제외 숫자만 입력"></input></div>
+                        <div><input type='text' name='userPhone' value={user.userPhone} onChange={handleChange}  placeholder="'-'제외 숫자만 입력" required></input></div>
                     </div>
                     <div className='inputs'>
                         <div className='cols'><purple>*</purple> 닉네임 </div>
-                        <div><input type='text' name='userNickname' value={formValues.userNickname} onChange={handleChange} placeholder='닉네임 입력'></input></div>
+                        <div><input type='text' name='userNickname' value={user.userNickname} onChange={handleChange} placeholder='닉네임 입력' required></input></div>
                     </div>
                     <div className='inputs'>
                         <div className='cols'><purple>*</purple> 이메일 </div>
-                        <div><input type='text' name='userEmail' value={formValues.userEmail} onChange={handleChange} placeholder='이메일 입력'></input></div>
+                        <div><input type='text' name='userEmail' value={user.userEmail} onChange={handleChange} placeholder='이메일 입력' required></input></div>
                     </div>
                 </section>
 
                 <div className='checkAgree'>
-                    <label>
-                        <input
-                            type='checkbox'
-                            checked={isChecked_a}
-                            onChange={handleCheckbox_a_Change}
-                        />
-                        <span><red>[필수]</red> 이용약관 동의</span>
-                    </label>
-                    <label>
-                        <input
-                            type='checkbox'
-                            checked={isChecked_b}
-                            onChange={handleCheckbox_b_Change}
-                        />
-                        <span>[선택] 마케팅 정보 수신 동의</span>
-                    </label>
-                    <br/>
-                    <button id='backBtn' type='button' onClick={() => { window.location.href = '/register' }}>취소</button>
+                    <button id='backBtn' type='button' onClick={() => { window.location.href = '/myinfo/UserInfo' }}>취소</button>
                     <button id='registerBtn' type="submit">회원가입</button>
                 </div>
-
 
             </form>
 
